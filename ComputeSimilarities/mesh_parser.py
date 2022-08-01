@@ -177,23 +177,23 @@ class MeSHParser(object):
     #Maps descriptors IDS to tree coordinates.
     def printMappingFile(self, thesaurus,name):
         mapfile = open(name,'w')
-        print "Printing mapping file"
+        print("Printing mapping file")
         for node_id in thesaurus.get_node_ids():
             node = thesaurus.get_node(node_id)
             #if not node.is_dummy:
             mapfile.write(node_id + "\t" + '\t'.join(node.get_tree_positions()) + "\n")
-        print "Done"
+        print("Done")
         mapfile.close()
 
     #Maps names to Descriptor IDS
     def printNameIdMapping(self,thesaurus,name):
         mapfile = open(name,'w')
-        print "Printing mapping file"
+        print("Printing mapping file")
         for node_id in thesaurus.get_node_ids():
             node = thesaurus.get_node(node_id)
             #if not node.is_dummy:
             mapfile.write(node.get_name() + "\t" + '\t'.join(node.get_synonyms()) + '|' + node_id + "\n")
-        print "Done"
+        print("Done")
         mapfile.close()
 
 if __name__ == "__main__":
@@ -203,7 +203,7 @@ if __name__ == "__main__":
         #print "python ", sys.argv[0], " descriptors_file annotation_file"
         #sys.exit()
     #----
-    print "\t- Loading parser.."
+    print("\t- Loading parser..")
     parser = MeSHParser(sys.argv[1], ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','V','Z'])
     thesaurus = parser.get_thesaurus(True)
     parser.printNameIdMapping(thesaurus, 'full_mapping_synonyms')

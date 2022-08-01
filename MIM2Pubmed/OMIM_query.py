@@ -83,8 +83,8 @@ def fetchData(phenotype_list, outfile, config_file):
         time_limit = parser.get('Throttling', 'time')
         req_number = parser.get('Throttling', 'req_number')
     except:
-        print 'There is a problem with the configuration file. Please refer to the supplementary material for the appropriate format'
-        print 'Program will now terminate'
+        print('There is a problem with the configuration file. Please refer to the supplementary material for the appropriate format')
+        print('Program will now terminate')
         exit()
 
     #-----
@@ -128,7 +128,7 @@ def fetchData(phenotype_list, outfile, config_file):
                 barCounter = barCounter + 1
                 bar.update(barCounter)
             except:
-                print 'The query ' + current_query + ' could not be completed. Full traceback follows'
+                print('The query ' + current_query + ' could not be completed. Full traceback follows')
                 exc_type, exc_value, exc_traceback = sys.exc_info()
                 traceback.print_exception(exc_type, exc_value, exc_traceback, limit=2, file=sys.stdout)
                 exit()
@@ -156,7 +156,7 @@ help_string = """
 if __name__ == '__main__':
     
     if len(sys.argv[1:]) < 2:
-        print help_string
+        print(help_string)
         exit()
 
     if len(sys.argv) == 2:

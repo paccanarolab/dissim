@@ -86,11 +86,11 @@ from writeFiles import *
 import progressbar
 
 #CATEGORIES
-categories = dict([
-    ('TWO',['A','C']),
-    ('FIVE',['A','C','D','E','G']),
-    ('ALL',['A','B','C','D','E','F','G','H','I','J','K','L','M','N','V','Z'])
-    ])
+categories = {
+    'TWO':['A','C'],
+    'FIVE':['A','C','D','E','G'],
+    'ALL':['A','B','C','D','E','F','G','H','I','J','K','L','M','N','V','Z']
+}
 
 methods_termwise = {0: (Resnik,'MAX'), 1:(Lin,'MAX'), 2: (Jiang,'MAX'), 3: (Schlicker, 'MAX')}
 names_termwise = {"RESNIK":0, "LIN":1, "JIANG":2, "SCHLICKER":3}
@@ -101,7 +101,7 @@ names_diseasewise = {"SIMUI":0, "SIMGIC":1}
 
 
 if len(sys.argv) < 5:
-    print help_string
+    print(help_string)
     sys.exit(-1)
 
 #0. prepare utilities
@@ -120,20 +120,20 @@ if len(sys.argv) == 7:
 parser = MeSHParser(descriptors_file, categories[categories_subset])
 thesaurus = parser.get_thesaurus(True)
 
-print "\t- Obtaining annotation"
+print("\t- Obtaining annotation")
 annotation_parser = AnnotationParser(thesaurus, annotation_file)
 annotation = annotation_parser.get_annotations()
 
-print "\t- Computing " + chosen_measure
+print("\t- Computing " + chosen_measure)
 if chosen_measure in names_termwise:
     method_pair = methods_termwise[names_termwise[chosen_measure]]
     sem_sim = method_pair[0](thesaurus, annotation,method_pair[1])
     #---------
     #per decriptor
-    print '\t\t- Computing per descriptor..'
+    print('\t\t- Computing per descriptor..')
     sem_sim.compute_semantic_similarity_per_descriptor()
     #per object
-    print '\t\t- Computing per object..'
+    print('\t\t- Computing per object..')
     sem_sim.compute_semantic_similarity_per_object_termwise()
     #--------------
     ##per descriptor
@@ -141,41 +141,41 @@ if chosen_measure in names_termwise:
     if os.path.isfile(cache_file):
         sem_sim.perDescriptor = np.loadtxt(cache_file,delimiter='\t')
     else:
-        print '\t\t- Computing per descriptor..'
+        print('\t\t- Computing per descriptor..')
         sem_sim.compute_semantic_similarity_per_descriptor()
-        print '\t\t- Writing per descriptor'
+        print('\t\t- Writing per descriptor')
         np.savetxt(cache_file ,sem_sim.get_perDescriptor(),delimiter='\t', newline='\n')
     #per object
     cache_file = './Cache/'+ chosen_measure + "_combined_" +str(categories_subset) +"_per_disease.txt"
     if os.path.isfile(cache_file):
         sem_sim.perObject = np.loadtxt(cache_file,delimiter='\t')
     else:
-        print '\t\t- Computing per object..'
+        print('\t\t- Computing per object..')
         sem_sim.compute_semantic_similarity_per_object_termwise()
-        print '\t\t- Saving per disease'
+        print('\t\t- Saving per disease')
         np.savetxt(cache_file ,sem_sim.get_perObject(),delimiter='\t', newline='\n')
     ##--------------
-    print '\t\t-Get LCA..'
+    print('\t\t-Get LCA..')
     lowest_common_ancestor = sem_sim.get_lowestCommonAncestor()
 elif chosen_measure in names_diseasewise:
     sem_sim = methods_diseasewise[names_diseasewise[chosen_measure]](thesaurus,annotation)
-    print '\t- Calculating per disease..'
+    print('\t- Calculating per disease..')
     sem_sim.compute_semantic_similarity_per_object_diseasewise()
 
 per_disease = sem_sim.get_perObject()
 
-print "\t -Writing file.."
+print("\t -Writing file..")
 
 writeTriplet(file_per_disease, per_disease, sem_sim)
 
-print "\t -Write LCA..."
+print("\t -Write LCA...")
 writeSelectedDescriptor(file_per_disease +"-LCA", lowest_common_ancestor)
 
 if compute_ism == "YES":
-    print "\t -Computing ISM for " + chosen_measure
+    print("\t -Computing ISM for " + chosen_measure)
     ism = ISM(thesaurus, annotation, per_disease)
     ism.ism()
     per_disease= ism.ISM
     file_per_disease = 'ISM-combined_similarity-' + chosen_measure
-    print "\t -Writing file for ISM_"+chosen_measure
+    print("\t -Writing file for ISM_"+chosen_measure)
     writeTriplet(file_per_disease, per_disease, sem_sim)

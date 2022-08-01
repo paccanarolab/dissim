@@ -81,11 +81,11 @@ def num_common(set1, set2):
 def compute_combined(values, output_folder, filename_modifier, method_key,tree_positions, filter_list):
     options = {0 : jaccard, 1 : dice, 2: overlap, 3 : num_common}
     names = {0 : "jaccard", 1 : "dice", 2: "overlap", 3 : "num_common"}
-    print names[method_key]
+    print(names[method_key])
     filtered_values =  filterAnnotation(values,filter_list, tree_positions)
     name = output_folder + filename_modifier + '_' + names[method_key]
     #merge them
-    print 'Calculating ' + name
+    print('Calculating ' + name)
     with open(name, "w") as out:
         for d1, d2 in it.combinations(sorted(values.keys()), 2):
             s1 = set(filtered_values[d1])
@@ -119,7 +119,7 @@ def compute_per_ontology(values,output_folder, key, tree_positions):
         barCounter = 0
         zero = 0
         total = 0
-        print 'Calculating ' + name
+        print('Calculating ' + name)
         with open(name, "w") as out:
             for d1, d2 in it.combinations(sorted(filtered_values.keys()), 2):
                 s1 = set(filtered_values[d1])
@@ -133,7 +133,7 @@ def compute_per_ontology(values,output_folder, key, tree_positions):
              #   bar.update(barCounter)
              #   barCounter+=1
 
-        print current_ontology + ' zero: ' + str(zero) + ' total: '+  str(total)
+        print(current_ontology + ' zero: ' + str(zero) + ' total: '+  str(total))
 
 help_string = """
         ---------------------------------------------------------------------------------------------------------------
@@ -152,7 +152,7 @@ help_string = """
 if __name__ == "__main__":
     
     if len(sys.argv) != 4:
-        print help_string
+        print(help_string)
         sys.exit(-1)
 
     output_folder = sys.argv[3]
@@ -160,11 +160,11 @@ if __name__ == "__main__":
     tree_positions = readTreePositions(sys.argv[2])
     values = read_mapping(sys.argv[1])
     
-    print 'Per ontology ',
+    print('Per ontology ',)
     for i in range(0,4):
         compute_per_ontology(values, sys.argv[3], i,tree_positions)
 
-    print 'Combined ',
+    print('Combined ',)
     allontologies = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'Z']
     fiveontologies =  ['A','C','D','E','G']
     for i in range(0,4):

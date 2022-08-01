@@ -102,7 +102,7 @@ Use: python filterBenchmarks.py file_to_filter omim_uniprot [uniprot_pfam_table 
 if __name__ == "__main__":
     #if we have one optional parameter, but not the second one.
     if len(sys.argv) < 3 or (len(sys.argv) > 3 and len(sys.argv) < 5):
-        print help_str
+        print(help_str)
         exit()
     #set the input parametesr.
     file_to_filter = sys.argv[1]
@@ -115,17 +115,17 @@ if __name__ == "__main__":
         invalid_pfam_file = sys.argv[4]
 
     #read omim to uniprot mapping
-    print 'Reading omim_to_uniprot..'
+    print('Reading omim_to_uniprot..')
     omim_uniprot_mapping = readOmimToEntity(omim_uniprot_file)
     #check if omim to pfam is required.
     valid_uniprots_pfam = set()
     invalid_pfam = []
     if uniprot_pfam_file:
-        print 'Reading invalid pfams..'
+        print('Reading invalid pfams..')
         invalid_pfam = readInvalidPfam(invalid_pfam_file)
-        print 'Reading uniprot to pfam mapping..'
+        print('Reading uniprot to pfam mapping..')
         valid_uniprots = readUniprotPfamMapping(uniprot_pfam_file, invalid_pfam)
 
     #read the file to filter, considering the filters and produceoutput.
-    print 'Filtering file..'
+    print('Filtering file..')
     filterFile(file_to_filter, omim_uniprot_mapping, valid_uniprots_pfam, file_to_filter+'-filter')

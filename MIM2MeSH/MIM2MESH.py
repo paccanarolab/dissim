@@ -35,18 +35,18 @@ if __name__ == '__main__':
     
     #check the parameters.
     if len(sys.argv[1:]) < 3:
-        print "--------------------------------------------------------------------------------------------------------------"
-        print "Maps each OMIM record to the MeSH terms of its associated publication"
-        print "Usage:"
-        print "======"
-        print "python MIM2MeSH.py mim2pubmed pubmed2mesh outputfile"
-        print "Where:"
-        print "mim2pubmed: Mapping between OMIM records and the PubMed identifiers of the referenced literature "
-        print "\t*mim\\tpubmedid\\t...\\tpubmedid"
-        print "pubmed2mesh: Mapping between PubMed records and their MeSH terms"
-        print "\t*pubmedid\\tmeshDescriptorUniqueId\\t...\\tmeshDescriptorUniqueId"
-        print "outputfile: Desired output file name"
-        print "--------------------------------------------------------------------------------------------------------------"
+        print("--------------------------------------------------------------------------------------------------------------")
+        print("Maps each OMIM record to the MeSH terms of its associated publication")
+        print("Usage:")
+        print("======")
+        print("python MIM2MeSH.py mim2pubmed pubmed2mesh outputfile")
+        print("Where:")
+        print("mim2pubmed: Mapping between OMIM records and the PubMed identifiers of the referenced literature ")
+        print("\t*mim\\tpubmedid\\t...\\tpubmedid")
+        print("pubmed2mesh: Mapping between PubMed records and their MeSH terms")
+        print("\t*pubmedid\\tmeshDescriptorUniqueId\\t...\\tmeshDescriptorUniqueId")
+        print("outputfile: Desired output file name")
+        print("--------------------------------------------------------------------------------------------------------------")
         exit()
     #------------------
 

@@ -103,7 +103,7 @@ at least one pfam family
 
 if __name__ == "__main__":
     if len(sys.argv) < 4 or len(sys.argv) > 5:
-        print help_str
+        print(help_str)
         exit()
 
     pfamscan_filename = sys.argv[1]
@@ -113,13 +113,13 @@ if __name__ == "__main__":
     values_exclusion = set()
     if len(sys.argv) == 5:
         exclusionList_filename = sys.argv[4]
-        print 'Reading exclusion list..'
+        print('Reading exclusion list..')
         values_exclusion = readExclusionList(exclusionList_filename)
     
-    print 'Reading pfamscan file..'
+    print('Reading pfamscan file..')
     values_pfamscan = readPfamScan(pfamscan_filename)
-    print 'Reading mimtoprot file..'
+    print('Reading mimtoprot file..')
     values_mimtoprot = readMimToProt(mimtoprot_filename)
     #just to see if the fourt parameter was provided
-    print 'Producing benchmark..'
+    print('Producing benchmark..')
     produceBenchmark(values_pfamscan, values_mimtoprot, values_exclusion, outfile_name)

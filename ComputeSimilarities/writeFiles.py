@@ -26,8 +26,8 @@ __version__ = "3"
 #writes the triplet file.
 def writeTriplet(file_per_disease,per_disease,sem_sim):
     with open("./localStore/"+ file_per_disease, "w") as f_dis:
-        for i in xrange (per_disease.shape[0]):
-            for j in xrange (i, per_disease.shape[1]):
+        for i in range(per_disease.shape[0]):
+            for j in range(i, per_disease.shape[1]):
                 if per_disease[i,j] != 0.0:
                     f_dis.write(sem_sim.objects[i] + "\t" + sem_sim.objects[j] + "\t" + str(per_disease[i,j]) + "\n") 
 

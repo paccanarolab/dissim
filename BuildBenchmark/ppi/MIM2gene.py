@@ -82,8 +82,8 @@ class parser(object):
             for line in mapFile:
                 try:
                     yield Interaction(self.__source, line)
-                except TypeError, ex:
-                    print "Parse Error. Please check the file"
+                except TypeError as ex:
+                    print("Parse Error. Please check the file")
                     exit()
     
     def __iter__(self):
@@ -178,7 +178,7 @@ Input:
 if __name__ == "__main__":
 
     if len(sys.argv) < 4:
-        print help_string
+        print(help_string)
         exit()
     uniprotToGenename = parse_uniprotToGenename(sys.argv[1])
     valid_omim = parse_validOmim(sys.argv[4])

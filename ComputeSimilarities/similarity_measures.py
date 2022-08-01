@@ -231,7 +231,7 @@ class ISM(object):
     """Computes the transition matrix. This matrix represents the transition probability from one
     node to another in the DAG."""
     def __initialisePmatrix(self):
-        print 'Initialising probability matrix..'
+        print('Initialising probability matrix..')
         self.P[self.__leaves,self.__leaves] = 1
         #we start in the root and go our way down
         for v in self.descriptors:
@@ -252,28 +252,28 @@ class ISM(object):
             for c in children:
                 N_c = Nc[c]
                 self.P[self.__descriptor_indices[c], self.__descriptor_indices[v]] = (1.0-float(len(N_v_star))/float(N_v)) * float(N_c)/float(N_u)
-        print 'Done!'
+        print('Done!')
     
     def __walk(self):
-        print 'Walking..'
+        print('Walking..')
         self.W_star = self.W
         while True:
             self.W = self.W_star
             self.W_star = self.P * self.W
             matrix_diff = np.linalg.norm(self.W_star - self.W)
-            print "\t" + str(matrix_diff) + "/" + str(self.epsilon)
+            print("\t" + str(matrix_diff) + "/" + str(self.epsilon))
             if matrix_diff <= self.epsilon:
                 break
         self.W = self.W_star
-        print 'Done!'
+        print('Done!')
 
     def __initialiseB(self):
-        print 'Computing B..'
+        print('Computing B..')
         A = self.__computeA()
         #has to do with the indexing of numpy. All columns will be considered. As W is desc x desc, its fine.
         #what does the matrix B represent
         self.B = self.W[self.__leaves] * A
-        print 'Done!'
+        print('Done!')
 
     def __computeA(self):
         #transition probability from an annotation to a leaf.
@@ -287,7 +287,7 @@ class ISM(object):
 
     def __genewise(self):
         #---
-        print 'Computing RWC..'
+        print('Computing RWC..')
         n = len(self.objects)
         sum_col = np.sum(self.B, axis=0).tolist()[0]
         #we should not have zero objects.
@@ -297,7 +297,7 @@ class ISM(object):
                 b = self.B[:,j]
                 combinedSum = a*b
                 self.RWC[i][j] = combinedSum / (float(sum_col[i] + sum_col[j]) - combinedSum)
-        print "Done!"
+        print("Done!")
 
 
 if __name__ == "__main__":
@@ -308,15 +308,15 @@ if __name__ == "__main__":
         ])
     #----
     if len(sys.argv) < 3:
-        print "Usage:"
-        print "python ", sys.argv[0], " descriptors_file annotation_file"
+        print("Usage:")
+        print("python ", sys.argv[0], " descriptors_file annotation_file")
         sys.exit()
     #----
-    print 'Starting utilities..'
-    print "\t- Loading parser.."
+    print('Starting utilities..')
+    print("\t- Loading parser..")
     parser = MeSHParser(sys.argv[1],categories['ALL'])
     thesaurus = parser.get_thesaurus(False)
-    print "\t- Obtaining annotation"
+    print("\t- Obtaining annotation")
     annotation_parser = AnnotationParser(thesaurus, sys.argv[2])
     #we just use the A category to make it fast
     annotation = annotation_parser.get_annotations('D')
@@ -327,7 +327,7 @@ if __name__ == "__main__":
    #     raw_input()
     
 
-    print 'Information content per node'
+    print('Information content per node')
     root = len(list(annotation.get_objects()))
     similarity = Resnik(thesaurus, annotation, 'max')
     with open('./localStore/test_set','w') as f:

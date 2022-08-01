@@ -53,8 +53,8 @@ class queryPubmed(object):
         try:
             config_email = parser.get('EntrezConfig','email')
         except:
-            print 'There is a problem with the configuration file. Please refer to the supplementary material for the appropriate format'
-            print 'Program will now terminate'
+            print('There is a problem with the configuration file. Please refer to the supplementary material for the appropriate format')
+            print('Program will now terminate')
             exit()
         #-----
         #-------------------------
@@ -67,11 +67,11 @@ class queryPubmed(object):
         bar = progressbar.ProgressBar(maxval = steps + 1, widgets=[progressbar.Bar('*', '[', ']'), ' ', progressbar.Percentage()]).start()
         barCounter = 0
         #------------------------
-        print "Processing " + str(num_lines) + " records"
+        print("Processing " + str(num_lines) + " records")
         outfile = open(self.__pubmedToMeshOutfile,'a')
         Entrez.email = config_email
         if self.__majorTopicsOnly:
-            print 'Getting only major topics'
+            print('Getting only major topics')
 
         with open(self.__pubmedInputFilename, 'r') as infile:
             while (True):
@@ -101,7 +101,7 @@ class queryPubmed(object):
         try:
             handle = Entrez.efetch(db="pubmed", id=pubmed_ids, retmode="xml")
         except:
-            print 'Entrez efetch error. Waiting 5 seconds and retrying...'
+            print('Entrez efetch error. Waiting 5 seconds and retrying...')
             time.sleep(5)
             return self.getAllMeSHTerms(pubmed_ids)
         records = Entrez.read(handle)
@@ -197,7 +197,7 @@ if __name__ == '__main__':
     #just some user output
 
     if len(sys.argv[1:]) < 3:
-        print help_string
+        print(help_string)
         exit()
 
     pubmedInputFile = sys.argv[1]
@@ -209,11 +209,11 @@ if __name__ == '__main__':
     mappingFile = None
     majorTopicsOnly = True
     if sys.argv[2].upper() == 'NO':
-        print 'Reading mapping file..'
+        print('Reading mapping file..')
         mapping = readMappingFile(sys.argv[3])
         majorTopicsOnly = False
 
-    print 'Starting to fetch data...'
+    print('Starting to fetch data...')
     #create theobject and process it.
     query = queryPubmed(pubmedInputFile, majorTopicsOnly, mapping, pubmed2MeshOutput, config_file_path)
     query.process()

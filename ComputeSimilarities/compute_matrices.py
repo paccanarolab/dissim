@@ -38,12 +38,11 @@ names_termwise = {"RESNIK":0, "LIN":1, "JIANG":2, "SCHLICKER":3}
 methods_diseasewise = {0: SimUI, 1:SimGIC}
 names_diseasewise = {"SIMUI":0, "SIMGIC":1}
 
-
-categories = dict([
-    ('TWO',['A','C']),
-    ('FIVE',['A','C','D','E','G']),
-    ('ALL',['A','B','C','D','E','F','G','H','I','J','K','L','M','N','Z'])
-    ])
+categories = {
+    'TWO':['A','C'],
+    'FIVE':['A','C','D','E','G'],
+    'ALL':['A','B','C','D','E','F','G','H','I','J','K','L','M','N','V','Z']
+}
 
 help_string = """
     --------------------------------------------------------------------------------------------------------------
@@ -89,7 +88,7 @@ help_string = """
 
 
 if len(sys.argv) < 5:
-    print help_string
+    print(help_string)
     sys.exit(-1)
 
 descriptors_file = sys.argv[1]
@@ -111,10 +110,10 @@ annotation_parser = AnnotationParser(thesaurus, annotation_file)
 categories = thesaurus.get_category_ids()
 for cat in sorted(categories):
 
-    print "Processing category ", cat, "(", thesaurus.get_node(cat).get_name(), ")..."
+    print("Processing category ", cat, "(", thesaurus.get_node(cat).get_name(), ")...")
     annotation = annotation_parser.get_annotations(cat)
 
-    print "\t- Computing " + chosen_measure
+    print("\t- Computing " + chosen_measure)
     if chosen_measure in names_termwise:
         method_pair = methods_termwise[names_termwise[chosen_measure]]
         sem_sim = method_pair[0](thesaurus, annotation,method_pair[1])
@@ -124,9 +123,9 @@ for cat in sorted(categories):
         if os.path.isfile(cache_file):
             sem_sim.perDescriptor = np.loadtxt(cache_file,delimiter='\t')
         else:
-            print '\t\t- Calculating  per descriptor..'
+            print('\t\t- Calculating  per descriptor..')
             sem_sim.compute_semantic_similarity_per_descriptor()
-            print '\t\t- Writing per descriptor'
+            print('\t\t- Writing per descriptor')
             np.savetxt(cache_file,sem_sim.get_perDescriptor(),delimiter='\t', newline='\n')
             #print '\t\t-Get LCA..'
             LCA = sem_sim.get_lowestCommonAncestor()
@@ -137,22 +136,22 @@ for cat in sorted(categories):
         if os.path.isfile(cache_file):
             sem_sim.perObject = np.loadtxt(cache_file,delimiter='\t')
         else:
-            print '\t\t- Calculating per disease...'
+            print('\t\t- Calculating per disease...')
             sem_sim.compute_semantic_similarity_per_object_termwise()
-            print '\t\t- Saving per disease'
+            print('\t\t- Saving per disease')
             np.savetxt(cache_file,sem_sim.get_perObject(),delimiter='\t', newline='\n')
     elif chosen_measure in names_diseasewise:
         sem_sim = methods_diseasewise[names_diseasewise[chosen_measure]](thesaurus,annotation)
-        print '\t\t- Calculating per disease...'
+        print('\t\t- Calculating per disease...')
         sem_sim.compute_semantic_similarity_per_object_diseasewise()
 
     per_disease = sem_sim.get_perObject()
-    print "\t- Writing file.."
+    print("\t- Writing file..")
     writeTriplet(cat + '_' + chosen_measure + filename_modifier, per_disease, sem_sim)
 
 
     if compute_ism.upper() == "YES":
-        print "\t- computing ISM for "+ chosen_measure
+        print("\t- computing ISM for "+ chosen_measure)
         ism = ISM(thesaurus, annotation,per_disease)
         ism.ism()
         writeTriplet(cat+"_"+chosen_measure+ "_ISM", ism.getISM(), sem_sim)

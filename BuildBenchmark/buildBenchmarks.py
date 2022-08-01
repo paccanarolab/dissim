@@ -63,7 +63,8 @@ def extract_subset(filename, ids):
             omim2 = int(omim2)
             if omim1 in ids and omim2 in ids and omim1 != omim2:
                 mini, maxi = sorted([omim1, omim2])
-                matrix[(mini,maxi)] = float(simi) return matrix
+                matrix[(mini,maxi)] = float(simi) 
+    return matrix
 
  
 def print_intersection_matrix(file1, file2, ids, output):
@@ -114,12 +115,12 @@ help_string = """
 
 if __name__ == "__main__":
     if (len(sys.argv) != 6):
-        print help_string
+        print(help_string)
         sys.exit(-1)
 
     #get the ids in the similarity file.
     ids_in_2 = get_ids_from_file(sys.argv[2])
-    print "Number of OMIM ids in ", sys.argv[2], ": ", len(ids_in_2)
+    print("Number of OMIM ids in ", sys.argv[2], ": ", len(ids_in_2))
     #get the diseaes with proteins.
     diseases_with_proteins = readDiseasesWithProteins(sys.argv[3])
     #compute the intersection.
