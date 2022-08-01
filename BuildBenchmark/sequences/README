@@ -1,0 +1,31 @@
+Sources to produce the sequence similarity-based OMIM similarity matrix. In this
+OMIM similarity matrix, two OMIM terms will be linked if one of the respectively
+associated proteins have a very high sequence similarity (Smith-Waterman con 
+e-value < 1e-6). The rest will be marked as non-related.
+
+The steps are the following:
+
+1) Produce a FASTA file with the sequences (go to mimsp/ folder and follow the 
+instructions from the README file) and copy it to this folder.
+
+2) Run the Perl script "makeblast.pl" with that fasta file:
+
+	perl makeblast.pl sequences.fasta blast_output
+
+The file blast_output will be a file where the output of the sequence alignments
+will be located.
+
+3) Run the Perl script produce_sequence_similarity_graph.pl this way:
+
+	perl produce_sequence_similarity_graph.pl mimtoprot.txt blast_output output_similarity_file
+
+The produced output_similarity_file will be a file with the following format:
+
+OMIM_ID_I	OMIM_ID_J	SIMILARITY_I_J
+OMIM_ID_K	OMIM_ID_L	SIMILARITY_K_L
+...
+
+Where OMIM_ID_A_B are valid OMIM identifiers, and SIMILARITY_A_B are always 1 or 0, indicating that
+the previous OMIM ids are related (=1) or not (=0).
+
+

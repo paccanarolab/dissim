@@ -1,0 +1,24 @@
+In this folder there is a set of files dedicated to build a table mapping UniProtKB entries and OMIM terms.
+
+The source of this dataset is the mimtosp table, located here: http://www.uniprot.org/docs/mimtosp
+
+Because of its unmanageable format, the first step we need to do to get the data in a usable way is to run
+the Perl script "convert_mimtosp.pl" without any parameters in a UNIX-like system (depends on "wget"). This
+will download the mimtosp file and generate a "mimtoprot.txt" with the following format:
+
+OMIM_term	UniProt_id
+OMIM_term	UniProt_id
+OMIM_term	UniProt_id
+...
+
+When an OMIM term is mapped to more than one UniProt id, one different line is found for every UniProt id having
+all the same OMIM_term. Entries are tab-separated.
+
+The second step we should do is to retrieve the set of unique sequences into a Fasta file from UniProt. There is
+a script (get_sequences.pl) which will do that just for you. If you run
+
+	perl get_sequences mimtoprot.txt sequences.fasta unique_ids
+
+This will take the file "mimtoprot.txt" (produced in the previous step), take the unique UniProtKB ids (and write
+them into the "unique_ids" file), and retrieve from UniProtKB the fasta file "sequences.fasta" with the sequences
+of all those proteins. Obviously, you needs to have access to internet to be able to run this script.

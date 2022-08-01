@@ -1,0 +1,13 @@
+unique_pmids:
+    The pubmed ids for which we want to get the mesh terms.
+pmed2mesh:
+    The pubmeds mapped to the ncbi mesh unique identifier (these ids start with 68)
+pmed2mesh_nomesh:
+    The pubmeds for which we could not fetch mesh_terms.
+pmed2mesh_tr:
+    The pubmeds mapped to the propper MeSH descriptor unique id (D012345)
+
+To translate:
+    awk '{for(i = 2; i <= NF; i++) gsub("^68","D",$i)}1' pmids2mesh > pmids2mesh_tr
+
+
