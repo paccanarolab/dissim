@@ -4,13 +4,8 @@ from mesh_parser import MeSHParser
 from writeFiles import *
 from semsim import *
 #--
-from itertools import combinations_with_replacement
 import numpy as np
-import math
 import sys
-
-import pickle
-
 
 """
 This package contains all semantic similarity measures we have developed.

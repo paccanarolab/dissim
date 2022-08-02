@@ -83,7 +83,6 @@ from annotation import *
 from semsim import *
 from similarity_measures import *
 from writeFiles import *
-import progressbar
 
 #CATEGORIES
 categories = {
