@@ -26,12 +26,7 @@ __version__ = "3"
 
 
 import sys
-import tempfile
-from scipy.stats.stats import pearsonr
 import itertools
-
-from os import listdir
-from os.path import isfile, join
 
 def readDiseasesWithProteins(filename):
     values = set()

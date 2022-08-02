@@ -26,15 +26,12 @@ __version__ = "3"
 
 
 import xml.dom.minidom
-import ConfigParser
-import urllib2
+import configparser
+import urllib.request
 from itertools import islice
 from collections import defaultdict
 import datetime,time
 import sys,traceback
-import progressbar
-
-
 
 def handleDOM(referenceList,filename):
     mapping = defaultdict(list)
@@ -75,7 +72,7 @@ We add some throttling of our own, just to be nice and make sure we don't get ba
 
 def fetchData(phenotype_list, outfile, config_file):
     #read the cnf file.
-    parser = ConfigParser.ConfigParser()
+    parser = configparser.ConfigParser()
     parser.read(config_file)
     try:
         api_key = parser.get('APIconfig','key')
@@ -86,13 +83,6 @@ def fetchData(phenotype_list, outfile, config_file):
         print('There is a problem with the configuration file. Please refer to the supplementary material for the appropriate format')
         print('Program will now terminate')
         exit()
-
-    #-----
-    #just to have a nice progressbar.
-    num_lines = sum(1 for line in open(sys.argv[1]))
-    bar = progressbar.ProgressBar(maxval = int(num_lines/int(req_number)) + 1, widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()]).start()
-    #------------------------
-    barCounter = 0
 
     with open(phenotype_list, 'r') as infile:
 
@@ -121,12 +111,9 @@ def fetchData(phenotype_list, outfile, config_file):
 
             current_query = current_query + ''.join(line) + 'apiKey='+api_key
             try:
-                response = urllib2.urlopen(current_query)
+                response = urllib.request.urlopen(current_query)
                 dom = xml.dom.minidom.parseString(response.read())
                 handleDOM(dom, outfile)
-                #just for the bar
-                barCounter = barCounter + 1
-                bar.update(barCounter)
             except:
                 print('The query ' + current_query + ' could not be completed. Full traceback follows')
                 exc_type, exc_value, exc_traceback = sys.exc_info()

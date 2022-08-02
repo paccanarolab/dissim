@@ -2,8 +2,8 @@
 
 import sys
 from collections import defaultdict
-from itertools import combinations,product
-import progressbar
+from itertools import combinations
+from rich.progress import track
 
 
 #MIM:\bGENE_HUMAN\b(UniProt_id),\bGENENAME_HUMAN(UniProtId)...\n
@@ -115,13 +115,11 @@ class Interactions(object):
 def produce_benchmark(mimtosp, ppiNetwork, outfilename, useSharedProteins=True):
     allPairs = combinations(mimtosp.keys(),2)
     allPairslength = len(mimtosp.keys())
-    val = ((allPairslength)*(allPairslength-1))/2
-    bar = progressbar.ProgressBar(maxval = val, widgets=[progressbar.Bar('*', '[', ']'), ' ', progressbar.Percentage()])
-    barCounter = 0
+    val = ((allPairslength)*(allPairslength-1))//2
     with open(outfilename, 'w') as f:
         leftValue = ''
         rightValue = ''
-        for diseasePair in allPairs:
+        for diseasePair in track(allPairs, total=val, description="Producing benchmark..."):
             #just to make sure we allways write the smaller value to the left.
             leftValue = min(diseasePair)
             rightValue = max(diseasePair)
@@ -150,10 +148,6 @@ def produce_benchmark(mimtosp, ppiNetwork, outfilename, useSharedProteins=True):
                         interactors.extend(ppiNetwork[gene])
                     if set(interactors) & set(mimtosp[diseasePair[1]]):
                         f.write(leftValue +"\t" + rightValue + "\t" + str(1) + "\n")
-            #uopdate the bar.
-            barCounter = barCounter + 1
-            bar.update(barCounter)
-
 
 help_string = """
 --------------------------------------------------------------------------------------------------------------

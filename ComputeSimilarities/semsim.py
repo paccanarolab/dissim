@@ -26,10 +26,8 @@ __version__ = "3"
 from thesaurus import *
 from annotation import *
 import numpy as np
-import math
-import sys
-import progressbar
 from collections import OrderedDict
+from rich.progress import track
 
 class SemanticSimilarity(object):
 
@@ -94,36 +92,22 @@ class SemanticSimilarity(object):
 
     def compute_semantic_similarity_per_object_diseasewise(self):
         self.perObject = np.zeros((self.num_objects, self.num_objects))
-        #progressbar
-        bar = progressbar.ProgressBar(maxval = ((self.num_objects+ 1)*self.num_objects)/2, widgets=[progressbar.Bar('*', '[', ']'), ' ', progressbar.SimpleProgress()]).start()
-        barCounter = 0
-        #--------
-        for dis1 in range(self.num_objects):
+        for dis1 in track(range(self.num_objects), description="Computing semantic similarity..."):
             for dis2 in range(dis1, self.num_objects):
                 similarity = self.semantic_similarity(self.objects[dis1], self.objects[dis2])
                 self.perObject[dis1, dis2] = similarity
                 self.perObject[dis2, dis1] = similarity
-                bar.update(barCounter)
-                barCounter += 1
-
-        bar.finish()
         
 
     def compute_semantic_similarity_per_object_termwise(self):
 
         self.perObject = np.zeros((self.num_objects, self.num_objects))
-
-        #progressbar
-        bar = progressbar.ProgressBar(maxval = ((self.num_objects + 1)*self.num_objects) /2, widgets=[progressbar.Bar('*', '[', ']'), ' ', progressbar.SimpleProgress()]).start()
-        barCounter = 0
-
         descriptors_id_per_object = self.__get_descriptors_ids_per_object()
-        
         with open('./localStore/sim_distribution','w') as f:
             f.write('#disease A\tdisease B\tmax_similarity\tmin_similarity\tmean_similarity\tmedian_similarity\tstandard_deviation\n')
-            for i in xrange(self.num_objects):
+            for i in track(range(self.num_objects), description="Computing term-wise similarity..."):
                 rows = self.perDescriptor[ descriptors_id_per_object[i] ]
-                for j in xrange(i, self.num_objects):
+                for j in range(i, self.num_objects):
                     similarity = self.selectionStrategy(rows[:,descriptors_id_per_object[j]])
 
                     submat = rows[:,descriptors_id_per_object[j]]
@@ -133,23 +117,15 @@ class SemanticSimilarity(object):
                     f.write(self.objects[i] + '\t' + self.objects[j] + '\t' + str(np.max(submat)) + '\t' + str(np.min(submat)) + '\t' + str(mean) + '\t' + str(median) + '\t' + str(std_dev)+'\n')
                     self.perObject[i, j] = similarity
                     self.perObject[j, i] = similarity
-                    bar.update(barCounter)
-                    barCounter += 1
 
 
     def compute_semantic_similarity_per_descriptor(self):
 
         self.perDescriptor = np.zeros((self.num_descriptors, self.num_descriptors))
-
-        #progressbar
-        bar = progressbar.ProgressBar(maxval = ((self.num_descriptors + 1)*self.num_descriptors)/2, widgets=[progressbar.Bar('*', '[', ']'), ' ', progressbar.SimpleProgress()]).start()
-        barCounter = 0
-        #--------
-
         max_dist = -1000
-        for i in xrange(self.num_descriptors):
+        for i in track(range(self.num_descriptors), description="Computing semantic similarity per descriptor..."):
             desc1 = self.descriptors[i]
-            for j in xrange(i, self.num_descriptors):
+            for j in range(i, self.num_descriptors):
                 desc2 = self.descriptors[j]
                 (selectedAncestor, similarity) = self.semantic_similarity(desc1, desc2)
                 #assign the similarities.
@@ -157,9 +133,6 @@ class SemanticSimilarity(object):
                 self.perDescriptor[j, i] = similarity
                 #store the node that was selected. Quicker to store both, as speed is mor of a problem
                 self.lowestCommonAncestor[desc1].append((desc2,selectedAncestor,similarity))
-                bar.update(barCounter)
-                barCounter += 1
-        bar.finish()
 
         #we need to call a normalisation function because of jiang. Each measure 
         #implemets their own normalisation if needed.

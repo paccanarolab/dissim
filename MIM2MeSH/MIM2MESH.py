@@ -2,7 +2,7 @@
 
 import sys
 from collections import defaultdict
-import progressbar
+from rich.progress import track
 
 def readMappingFile(filename):
     values = defaultdict(list)
@@ -13,11 +13,8 @@ def readMappingFile(filename):
     return values
 
 def mim2mesh(mim2pubmed, pubmed2mesh, outfile):
-    bar = progressbar.ProgressBar(maxval = len(mim2pubmed), widgets=[progressbar.Bar('*', '[', ']'), ' ', progressbar.Percentage()]).start()
-    #merge them
-    barCounter = 0
     with open(outfile,'w') as f:
-        for mimno in mim2pubmed:
+        for mimno in track(mim2pubmed, description="Converting MIM to MeSH..."):
             line = [mimno]
             for pubmed in mim2pubmed[mimno]:
                 line.extend(pubmed2mesh[pubmed])
@@ -25,11 +22,6 @@ def mim2mesh(mim2pubmed, pubmed2mesh, outfile):
                 f.write('\t'.join(line))
                 f.write('\n')
 
-            #update the progressbar
-            barCounter = barCounter + 1
-            bar.update(barCounter)
-
-    bar.finish()
 
 if __name__ == '__main__':
     

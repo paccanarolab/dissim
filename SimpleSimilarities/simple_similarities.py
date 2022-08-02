@@ -28,7 +28,7 @@ __version__ = "3"
 from collections import defaultdict
 import itertools as it
 import sys
-import progressbar
+from rich.progress import track
 
 #descriptor-tree positions file
 def readTreePositions(filename):
@@ -121,7 +121,7 @@ def compute_per_ontology(values,output_folder, key, tree_positions):
         total = 0
         print('Calculating ' + name)
         with open(name, "w") as out:
-            for d1, d2 in it.combinations(sorted(filtered_values.keys()), 2):
+            for d1, d2 in track(it.combinations(sorted(filtered_values.keys()), 2), descriptions="Computing per ontology..."):
                 s1 = set(filtered_values[d1])
                 s2 = set(filtered_values[d2])
                 similarity = options[key](s1,s2)
