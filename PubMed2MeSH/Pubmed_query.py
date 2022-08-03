@@ -26,13 +26,13 @@ __license__ = "GPL"
 __version__ = "3"
 
 import xml.dom.minidom
-import ConfigParser
-import urllib2
+import configparser
+import urllib.request
 from itertools import islice
 from collections import defaultdict
 import datetime,time
 import sys,traceback
-import progressbar
+from rich.progress import Progress
 
 from Bio import Entrez
 
@@ -48,7 +48,7 @@ class queryPubmed(object):
         
     def process(self):
         #read the cnf file.
-        parser = ConfigParser.ConfigParser()
+        parser = configparser.ConfigParser()
         parser.read(self.__config_file)
         try:
             config_email = parser.get('EntrezConfig','email')
@@ -60,40 +60,38 @@ class queryPubmed(object):
         #-------------------------
         #this is just to have a nice progressbar.
         max_simultaneous = 10
-        num_lines = sum(1 for line in open(self.__pubmedInputFilename))
+        #TODO: look at S2F's way to get the line count
+        num_lines = sum(1 for _ in open(self.__pubmedInputFilename))
         steps = num_lines/max_simultaneous
         if num_lines < max_simultaneous:
             steps = 1
-        bar = progressbar.ProgressBar(maxval = steps + 1, widgets=[progressbar.Bar('*', '[', ']'), ' ', progressbar.Percentage()]).start()
-        barCounter = 0
         #------------------------
         print("Processing " + str(num_lines) + " records")
-        outfile = open(self.__pubmedToMeshOutfile,'a')
+        outfile = open(self.__pubmedToMeshOutfile,'w')
         Entrez.email = config_email
         if self.__majorTopicsOnly:
             print('Getting only major topics')
 
         with open(self.__pubmedInputFilename, 'r') as infile:
-            while (True):
-                pubmed_ids = [i for i in list(islice(infile, 10))]
-                if not pubmed_ids:
-                    break;
-                if (self.__majorTopicsOnly):
-                    #this requires a list
-                    allSets = self.getMajorTopics(pubmed_ids)
-                else:
-                    #this requires a comma separated string.
-                    allSets = self.getAllMeSHTerms(','.join(pubmed_ids))
+            with Progress() as progress:
+                task = progress.add_task(total=steps + 1, description="Querying PubMed...")
+                while (True):
+                    pubmed_ids = [i for i in list(islice(infile, 10))]
+                    if not pubmed_ids:
+                        break;
+                    if (self.__majorTopicsOnly):
+                        #this requires a list
+                        allSets = self.getMajorTopics(pubmed_ids)
+                    else:
+                        #this requires a comma separated string.
+                        allSets = self.getAllMeSHTerms(','.join(pubmed_ids))
 
-                if len(allSets) > 0:
-                    for line in  allSets:
-                        if len(line) > 1:
-                            outfile.write('\t'.join(line))
-                            outfile.write('\n')
-
-                barCounter = barCounter + 1
-                bar.update(barCounter)
-        bar.finish()
+                    if len(allSets) > 0:
+                        for line in  allSets:
+                            if len(line) > 1:
+                                outfile.write('\t'.join(line))
+                                outfile.write('\n')
+                    progress.advance(task)
         outfile.close()
 
     """This function produces lines reading the entire set of pubmed ids"""

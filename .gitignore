@@ -12,6 +12,11 @@ __pycache__/
 # Data
 data/
 
+# PyCharm
+.idea/
+
+# Python notebooks
+*.ipynb
 
 # Distribution / packaging
 .Python

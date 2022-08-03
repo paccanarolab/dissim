@@ -88,7 +88,7 @@ class MeSHParser(object):
     def __parse_MeSH_file(self, thesaurus):
         r = re.compile("\\s+")
         # 1.- we parse the MeSH descriptor file
-        with open(self.mesh_file) as f:
+        with open(self.mesh_file, encoding="utf8") as f:
             tree_positions = []
             synonyms = []
             name = ""
