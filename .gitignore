@@ -18,6 +18,11 @@ data/
 # Python notebooks
 *.ipynb
 
+# ignore any data written to the cache and localStore
+
+Cache/
+localStore/
+
 # Distribution / packaging
 .Python
 build/
