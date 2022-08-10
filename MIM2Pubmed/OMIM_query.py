@@ -96,7 +96,7 @@ def fetchData(phenotype_list, outfile, config_file):
         start_second =  datetime.datetime.now().second
 
         while (True):
-            current_query = 'http://'+server+'/api/entry/referenceList?'
+            current_query = 'https://'+server+'/api/entry/referenceList?'
             try:
                 selected_lines = lines[current_line : current_line + int(req_number)]
             except:

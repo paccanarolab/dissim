@@ -13,7 +13,7 @@ def run(mapping_file, outfile):
     pubmeds = set()
     with rich.progress.open(mapping_file, "r", description="Reading mapping file...") as f:
         for line in f:
-            pubmeds |= set(line.strip().split("\t")[:1])
+            pubmeds |= set(line.strip().split("\t")[1:])
     with open(outfile, "w") as o:
         for pubmed in rich.progress.track(pubmeds, description="Writing unique PubMed IDs..."):
             o.write(f"{pubmed}\n")

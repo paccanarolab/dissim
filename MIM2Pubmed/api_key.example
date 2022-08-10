@@ -1,0 +1,7 @@
+[APIconfig]
+Server = api.omim.org
+Key = uBaIJLGHhHyVNmKLoP5
+
+[Throttling]
+time = 0.5
+req_number = 20

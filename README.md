@@ -6,6 +6,11 @@ Since related diseases are associated to overlapping regions of the interactome,
 
 We have developed a method able to summarise the information available in the biomedical literature databases. By obtaining the MeSH terms associated with the publications referenced in OMIM, we are able to obtain a single number that accurately reflects the molecular relatedness between hereditary diseases.
 
+
+# Running the pipeline
+
+Please have a look at the [guide](https://github.com/paccanarolab/dissim/wiki/Running-the-pipeline). We welcome issues and pull requests for improving the code and guide!
+
 # How to cite
 
 If you're using this tool, please cite the following publication:

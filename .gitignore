@@ -23,6 +23,10 @@ data/
 Cache/
 localStore/
 
+# ignore the actual OMIM apiKey file
+
+api_key
+
 # Distribution / packaging
 .Python
 build/
