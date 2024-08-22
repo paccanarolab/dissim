@@ -95,7 +95,7 @@ class queryPubmed(object):
         outfile.close()
 
     """This function produces lines reading the entire set of pubmed ids"""
-    def getAllMeSHTerms(self,pubmed_ids):
+    def getAllMeSHTerms(self, pubmed_ids):
         try:
             handle = Entrez.efetch(db="pubmed", id=pubmed_ids, retmode="xml")
         except:
@@ -104,35 +104,21 @@ class queryPubmed(object):
             return self.getAllMeSHTerms(pubmed_ids)
         records = Entrez.read(handle)
         all_mesh_terms = list()
-        for record in records:
+        for k, record in records.items():
             try:
-                mesh_list = record['MedlineCitation']['MeshHeadingList']
-                line = list()
-                #add the current pubmed id.
-                line.append(str(record['MedlineCitation']['PMID']))
-                for mesh_term  in mesh_list:
-                    translated = self.translate(str(mesh_term['DescriptorName']))
-                    if len(translated) > 0:
-                        line.append(translated)
-                all_mesh_terms.append(line)
-            except:
-                pass
-            try:
-                for rec in records[record]:
-                    mesh_list = rec['MedlineCitation']['MeshHeadingList']
-                    line = list()
-                    #add the current pubmed id.
-                    line.append(str(rec['MedlineCitation']['PMID']))
-                    for mesh_term  in mesh_list:
-                        translated = self.translate(str(mesh_term['DescriptorName']))
-                        if len(translated) > 0:
-                            line.append(translated)
-                    all_mesh_terms.append(line) 
+                for i, rec in enumerate(record):
+                    if 'MeshHeadingList' in rec['MedlineCitation']:
+                        mesh_list = rec['MedlineCitation']['MeshHeadingList']
+                        line = list()
+                        #add the current pubmed id.
+                        line.append(str(rec['MedlineCitation']['PMID']))
+                        for mesh_term in mesh_list:
+                            line.append(mesh_term['DescriptorName'].attributes['UI'])
+                        all_mesh_terms.append(line)
             except:
                 continue
-                
-        return all_mesh_terms
 
+        return all_mesh_terms
     """
     This function will translate the names provided by the full description of
     the mesh term (i.e. the string) to the unique descriptor. This requires
@@ -159,23 +145,6 @@ class queryPubmed(object):
         records = Entrez.read(handle)
         all_mesh_terms = list()
         for k, record in records.items():
-            try:
-                if 'MeshHeadingList' in record['MedlineCitation']:
-                    mesh_list = record['MedlineCitation']['MeshHeadingList']
-                    line = list()
-                    #add the current pubmed id.
-                    line.append(str(record['MedlineCitation']['PMID']))
-                    for mesh_term in mesh_list:
-                        if mesh_term['DescriptorName'].attributes['MajorTopicYN'] == 'Y':
-                            line.append(mesh_term['DescriptorName'].attributes['UI'])
-                        else:
-                            for q in mesh_term['QualifierName']:
-                                if q.attributes['MajorTopicYN'] == 'Y':
-                                    line.append(mesh_term['DescriptorName'].attributes['UI'])
-                                    break
-                    all_mesh_terms.append(line)
-            except:
-                pass
             try:
                 for i, rec in enumerate(record):
                     if 'MeshHeadingList' in rec['MedlineCitation']:
