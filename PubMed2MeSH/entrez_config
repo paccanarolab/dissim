@@ -1,2 +1,4 @@
 [EntrezConfig]
 email = your_email_here
+# optional, raises the NCBI rate limit from 3 to 10 requests per second
+api_key =

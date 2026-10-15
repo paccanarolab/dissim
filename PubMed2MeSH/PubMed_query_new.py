@@ -59,7 +59,7 @@ class queryPubmed(object):
         #-----
         #-------------------------
         #this is just to have a nice progressbar.
-        max_simultaneous = 10
+        max_simultaneous = 200
         #TODO: look at S2F's way to get the line count
         num_lines = sum(1 for _ in open(self.__pubmedInputFilename))
         steps = num_lines/max_simultaneous
@@ -76,7 +76,7 @@ class queryPubmed(object):
             with Progress() as progress:
                 task = progress.add_task(total=steps + 1, description="Querying PubMed...")
                 while (True):
-                    pubmed_ids = [i for i in list(islice(infile, 10))]
+                    pubmed_ids = [i for i in list(islice(infile, max_simultaneous))]
                     if not pubmed_ids:
                         break;
                     if (self.__majorTopicsOnly):
