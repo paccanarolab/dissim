@@ -85,6 +85,20 @@ class MeSHParser(object):
                 node.add_child(category_node)
 
 
+    #adds the record we just finished reading, provided it belongs to one of the
+    #categories we selected.
+    def __add_record(self, thesaurus, name, identifier, tree_positions, synonyms, is_a_tree):
+        #we need to check if the current node is supposed to be added
+        #based on the ontologies we have selected.
+        tree_positions = [i for i in tree_positions if i[0] in thesaurus.get_category_ids()]
+        if tree_positions:
+            node = MeSHThesaurusNode(name, identifier, tree_positions)
+            node.set_synonyms(synonyms)
+            if is_a_tree:
+                node.set_dummy(True)
+                thesaurus.add_tree(identifier, name)
+            thesaurus.add_node(node)
+
     def __parse_MeSH_file(self, thesaurus):
         r = re.compile("\\s+")
         # 1.- we parse the MeSH descriptor file
@@ -94,19 +108,15 @@ class MeSHParser(object):
             name = ""
             identifier = ""
             is_a_tree = False
+            in_record = False
             for line in f:
                 line = line.strip()
-                if len(line) == 0:
-                    #we need to check if the current node is supposed to be added
-                    #based on the ontologies we have selected.
-                    tree_positions = [i for i in tree_positions if i[0] in thesaurus.get_category_ids()]
-                    if tree_positions:
-                        node = MeSHThesaurusNode(name, identifier, tree_positions)
-                        node.set_synonyms(synonyms)
-                        if is_a_tree:
-                            node.set_dummy(True)
-                            thesaurus.add_tree(identifier, name)
-                        thesaurus.add_node(node)
+                #records are delimited by *NEWRECORD, not by blank lines: a handful
+                #of records carry a stray blank line inside a text field, and
+                #splitting on those loses the descriptor and orphans its subtree.
+                if line.startswith("*NEWRECORD"):
+                    if in_record:
+                        self.__add_record(thesaurus, name, identifier, tree_positions, synonyms, is_a_tree)
 
                     #restart the whole process.
                     name = ""
@@ -114,6 +124,7 @@ class MeSHParser(object):
                     is_a_tree = False
                     tree_positions = []
                     synonyms = []
+                    in_record = True
                 elif line.startswith("UI = "):
                     identifier = line.split()[2].strip()
                 elif line.startswith("MN = "):
@@ -128,14 +139,11 @@ class MeSHParser(object):
                         l = l.split("|")[0]
                         synonyms.append(l)
 
-                
-            if len(tree_positions) != 0:
-                node = MeSHThesaurusNode(name, identifier, tree_positions)
-                if is_a_tree:
-                    node.set_dummy(True)
-                    thesaurus.add_tree(identifier, name)
-                thesaurus.add_node(node)
-    
+
+            #the last record of the file has no *NEWRECORD after it.
+            if in_record:
+                self.__add_record(thesaurus, name, identifier, tree_positions, synonyms, is_a_tree)
+
         # 2.- we adjust relationships between trees and categories
         for tree_id in thesaurus.get_trees_ids():
             tree_node = thesaurus.get_node(tree_id)
